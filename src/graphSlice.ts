@@ -4,6 +4,7 @@ import { nanoid } from 'nanoid'
 export interface Node {
   id: number
   label: string
+  color: string
 }
 
 export interface Edge {
@@ -22,11 +23,11 @@ const newId = (nodes: Node[]) => {
 
 const initialState: GraphState = {
   nodes: [
-    { id: 1, label: 'Node 1' },
-    { id: 2, label: 'Node 2' },
-    { id: 3, label: 'Node 3' },
-    { id: 4, label: 'Node 4' },
-    { id: 5, label: 'Node 5' },
+    { id: 1, label: 'Node 1', color: 'red' },
+    { id: 2, label: 'Node 2', color: 'white'  },
+    { id: 3, label: 'Node 3', color: 'white'  },
+    { id: 4, label: 'Node 4', color: 'white'  },
+    { id: 5, label: 'Node 5', color: 'white'  },
   ],
   edges: [
     { from: 1, to: 2 },
@@ -44,13 +45,23 @@ const graphSlice = createSlice({
       reducer(state, action) {
         state.nodes.push({
           id: newId(state.nodes),
-          label: action.payload
+          ...action.payload
         })
+      },
+      prepare(data: any) { return { id: nanoid(), payload: data } as any },
+    },
+    setNodeColor: {
+      reducer(state, action) {
+        const node = state.nodes.find((n) => n.id === action.payload.node.id)
+        if (!node) {
+          return
+        }
+        node.color = action.payload.color
       },
       prepare(data: any) { return { id: nanoid(), payload: data } as any },
     },
   },
 })
 
-export const { addNode } = graphSlice.actions
+export const { addNode, setNodeColor } = graphSlice.actions
 export default graphSlice.reducer

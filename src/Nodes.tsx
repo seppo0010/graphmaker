@@ -1,8 +1,5 @@
 import React, { useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import SearchIcon from '@material-ui/icons/Search';
@@ -10,6 +7,7 @@ import ClearIcon from '@material-ui/icons/Clear';
 import IconButton from '@material-ui/core/IconButton';
 import InputAdornment from '@material-ui/core/InputAdornment';
 
+import NodeView from './NodeView'
 import { addNode } from './graphSlice'
 import type { RootState } from './store'
 
@@ -20,7 +18,7 @@ function Nodes() {
   const newNode = (evt: React.FocusEvent<HTMLInputElement>) => {
     const label = evt.target.value;
     if (label) {
-      dispatch(addNode(label))
+      dispatch(addNode({ label, color: 'white' }))
     }
   }
   return (
@@ -58,13 +56,11 @@ function Nodes() {
         label="Agregar nodo..."
         onBlur={newNode}
         />
-      <List>
+      <ul style={{padding: 0}}>
         {graph.nodes.map((node: any) => (
-          <ListItem key={node.id}>
-            <ListItemText primary={node.label} />
-          </ListItem>
+          <NodeView key={node.id} node={node} />
         ))}
-      </List>
+      </ul>
     </div>
   )
 }
