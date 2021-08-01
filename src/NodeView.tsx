@@ -8,22 +8,23 @@ import CircleIcon from '@material-ui/icons/RadioButtonUnchecked';
 import TriangleIcon from '@material-ui/icons/ChangeHistory';
 
 import { setNodeColor, setNodeShape } from './graphSlice'
-import type { Node, Shape } from './graphSlice'
+import type { Node, Color, Shape } from './graphSlice'
 
-const colors = ['white', 'red', 'blue', 'yellow']
-function ColorOption({node, ...props}: any) {
+const colors: Color[] = ['white', 'red', 'blue', 'yellow']
+function ColorOption({node, color, ...props}: {node: Node, color: Color}) {
   const dispatch = useDispatch()
   return <Button style={{
     width: 30,
     minWidth: 30,
     height: 30,
     borderWidth: 4,
-    borderColor: node.color === props.background ? 'red' : 'black',
+    borderColor: node.color === color ? 'red' : 'black',
     borderStyle: 'solid',
     margin: 8,
+    background: color,
     ...props
   }} onClick={() => {
-    dispatch(setNodeColor({ node, color: props.background }))
+    dispatch(setNodeColor({ node, color }))
   }}></Button>
 }
 
@@ -31,7 +32,7 @@ function ColorPicker({node}: {node: Node}) {
   return (
     <div style={{display: 'flex', marginLeft: -8}}>
       {colors.map((c) => (
-        <ColorOption node={node} background={c} />
+        <ColorOption key={c} node={node} color={c} />
       ))}
     </div>
   )
@@ -61,7 +62,7 @@ function ShapePicker({node}: {node: Node}) {
   return (
     <div style={{display: 'flex', marginLeft: -8}}>
       {shapes.map((c) => (
-        <ShapeOption node={node} shape={c} />
+        <ShapeOption key={c} node={node} shape={c} />
       ))}
     </div>
   )

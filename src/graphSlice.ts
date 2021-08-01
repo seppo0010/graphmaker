@@ -49,7 +49,9 @@ const graphSlice = createSlice({
       reducer(state, action) {
         state.nodes.push({
           id: newId(state.nodes),
-          ...action.payload
+          label: action.payload.label,
+          shape: 'box',
+          color: 'white',
         })
       },
       prepare(data: any) { return { id: nanoid(), payload: data } as any },
