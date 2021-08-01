@@ -1,10 +1,14 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { nanoid } from 'nanoid'
 
+export type Color = 'white' | 'red' | 'blue' | 'yellow'
+export type Shape = 'star' | 'box' | 'ellipsis' | 'triangle'
+
 export interface Node {
   id: number
   label: string
-  color: string
+  color: Color
+  shape: Shape
 }
 
 export interface Edge {
@@ -23,11 +27,11 @@ const newId = (nodes: Node[]) => {
 
 const initialState: GraphState = {
   nodes: [
-    { id: 1, label: 'Node 1', color: 'red' },
-    { id: 2, label: 'Node 2', color: 'white'  },
-    { id: 3, label: 'Node 3', color: 'white'  },
-    { id: 4, label: 'Node 4', color: 'white'  },
-    { id: 5, label: 'Node 5', color: 'white'  },
+    { id: 1, label: 'Node 1', color: 'red', shape: 'box' },
+    { id: 2, label: 'Node 2', color: 'white', shape: 'box' },
+    { id: 3, label: 'Node 3', color: 'white', shape: 'box' },
+    { id: 4, label: 'Node 4', color: 'white', shape: 'box' },
+    { id: 5, label: 'Node 5', color: 'white', shape: 'box' },
   ],
   edges: [
     { from: 1, to: 2 },
@@ -60,8 +64,18 @@ const graphSlice = createSlice({
       },
       prepare(data: any) { return { id: nanoid(), payload: data } as any },
     },
+    setNodeShape: {
+      reducer(state, action) {
+        const node = state.nodes.find((n) => n.id === action.payload.node.id)
+        if (!node) {
+          return
+        }
+        node.shape = action.payload.shape
+      },
+      prepare(data: any) { return { id: nanoid(), payload: data } as any },
+    },
   },
 })
 
-export const { addNode, setNodeColor } = graphSlice.actions
+export const { addNode, setNodeColor, setNodeShape } = graphSlice.actions
 export default graphSlice.reducer
