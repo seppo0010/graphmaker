@@ -4,14 +4,17 @@ import { nanoid } from 'nanoid'
 export type Color = 'white' | 'red' | 'blue' | 'yellow'
 export type Shape = 'star' | 'box' | 'ellipsis' | 'triangle'
 
-export interface Node {
+interface WithId {
   id: number
+}
+
+export interface Node extends WithId {
   label: string
   color: Color
   shape: Shape
 }
 
-export interface Edge {
+export interface Edge extends WithId {
   from: number
   to: number
 }
@@ -21,7 +24,7 @@ interface GraphState {
   edges: Edge[]
 }
 
-const newId = (nodes: Node[]) => {
+const newId = (nodes: WithId[]) => {
   return Math.max(...nodes.map((n) => n.id)) + 1
 }
 
@@ -34,10 +37,10 @@ const initialState: GraphState = {
     { id: 5, label: 'Node 5', color: 'white', shape: 'box' },
   ],
   edges: [
-    { from: 1, to: 2 },
-    { from: 1, to: 3 },
-    { from: 2, to: 4 },
-    { from: 2, to: 5 }
+    { id: 1, from: 1, to: 2 },
+    { id: 2, from: 1, to: 3 },
+    { id: 3, from: 2, to: 4 },
+    { id: 4, from: 2, to: 5 }
   ],
 }
 

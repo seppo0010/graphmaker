@@ -17,13 +17,19 @@ function Outline() {
       setCurrentGraph(JSON.parse(j))
       setVersion((parseInt(version) + 1).toString())
     }
-  }, [setPreviousGraph, graph, previousGraph, version])
+    if (network) {
+      (network as any).body.data.nodes.update(graph.nodes);
+      (network as any).body.data.edges.update(graph.edges);
+    }
+  }, [setPreviousGraph, graph, previousGraph, version, network])
 
   const visJsRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    setNetwork(visJsRef.current && currentGraph &&
-      new Network(visJsRef.current, currentGraph, {physics: {enabled: false}}))
-  }, [visJsRef, currentGraph]);
+    if (!network) {
+      setNetwork(visJsRef.current && currentGraph &&
+        new Network(visJsRef.current, currentGraph, {physics: {enabled: false}}))
+    }
+  }, [visJsRef, currentGraph, network]);
 
   return <div ref={visJsRef} style={{width: '100%', height: '99%'}} />;
 }
