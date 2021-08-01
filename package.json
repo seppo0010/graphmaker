@@ -18,7 +18,8 @@
     "react-redux": "^7.2.4",
     "react-scripts": "4.0.3",
     "typescript": "^4.1.2",
-    "vis-react": "^0.5.1",
+    "vis-data": "^7.1.2",
+    "vis-network": "^9.0.5",
     "web-vitals": "^1.0.1"
   },
   "scripts": {
