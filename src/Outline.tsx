@@ -1,30 +1,27 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { useSelector } from 'react-redux'
 import Graph from 'vis-react';
 
-function Outline() {
+import type { RootState } from './store'
 
-  const [graph, setGraph] = useState({
-    nodes: [
-      { id: 1, label: 'Node 1' },
-      { id: 2, label: 'Node 2' },
-      { id: 3, label: 'Node 3' },
-      { id: 4, label: 'Node 4' },
-      { id: 5, label: 'Node 5' },
-      // { id: 6, label: 'Node 6' },
-    ],
-    edges: [
-      { from: 1, to: 2 },
-      { from: 1, to: 3, color: 'red' },
-      { from: 2, to: 4 },
-      { from: 2, to: 5 }
-    ],
-    rand: '',
-  })
+function Outline() {
+  const graph = useSelector((state: RootState) => state.graph)
+  const [version, setVersion] = useState('0')
+  const [currentGraph, setCurrentGraph] = useState<null | typeof graph>(null)
+  const [previousGraph, setPreviousGraph] = useState('')
+  useEffect(() => {
+    const j = JSON.stringify(graph)
+    if (j !== previousGraph) {
+      setPreviousGraph(j)
+      setCurrentGraph(JSON.parse(j))
+      setVersion((parseInt(version) + 1).toString())
+    }
+  }, [setPreviousGraph, graph, previousGraph, version])
 
   return (
     <Graph
-      key={graph.rand}
-      graph={graph}
+      key={version}
+      graph={currentGraph || {nodes: [], edges: []}}
       options={{
         layout: {
           hierarchical: true
@@ -36,9 +33,6 @@ function Outline() {
       }}
       events={{
         select: function(event: any) {
-          if (graph.nodes.every((n) => n.id !== 6)) {
-            setGraph({...graph, nodes: graph.nodes.concat([{id: 6, label: 'Node 6'}]), rand: Math.random().toString()})
-          }
         }
       }}
     />

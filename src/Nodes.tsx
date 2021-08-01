@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -10,15 +10,17 @@ import ClearIcon from '@material-ui/icons/Clear';
 import IconButton from '@material-ui/core/IconButton';
 import InputAdornment from '@material-ui/core/InputAdornment';
 
+import { addNode } from './graphSlice'
 import type { RootState } from './store'
 
 function Nodes() {
+  const dispatch = useDispatch()
   const graph = useSelector((state: RootState) => state.graph)
   const [searchCriteria, setSearchCriteria] = useState('')
   const newNode = (evt: React.FocusEvent<HTMLInputElement>) => {
     const label = evt.target.value;
     if (label) {
-      alert(label)
+      dispatch(addNode(label))
     }
   }
   return (
@@ -58,7 +60,7 @@ function Nodes() {
         />
       <List>
         {graph.nodes.map((node: any) => (
-          <ListItem>
+          <ListItem key={node.id}>
             <ListItemText primary={node.label} />
           </ListItem>
         ))}
