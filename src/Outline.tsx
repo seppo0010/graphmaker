@@ -29,7 +29,8 @@ function Outline() {
         edges: {
           color: '#000000'
         },
-        interaction: { hoverEdges: true }
+        interaction: { hoverEdges: true },
+        physics: {enabled: false},
       }}
       events={{
         select: function(event: any) {
