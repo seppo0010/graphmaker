@@ -26,7 +26,7 @@ interface GraphState {
 }
 
 const newId = (nodes: WithId[]) => {
-  return Math.max(...nodes.map((n) => n.id) || 0) + 1
+  return Math.max(...nodes.map((n) => n.id).concat([0]) || 0) + 1
 }
 
 const initialState: GraphState = {
