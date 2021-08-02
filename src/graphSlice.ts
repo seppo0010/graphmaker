@@ -63,7 +63,7 @@ const graphSlice = createSlice({
     addEdge: {
       reducer(state, action) {
         state.edges.push({
-          id: newId(state.nodes),
+          id: newId(state.edges),
           from: action.payload.from.id,
           to: action.payload.to.id,
           color: 'black',
