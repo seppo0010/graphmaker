@@ -31,7 +31,7 @@ function Outline() {
     }
   }, [visJsRef, currentGraph, network]);
 
-  return <div ref={visJsRef} style={{width: '100%', height: '99%'}} />;
+  return <div ref={visJsRef} style={{width: '100%', height: '100vh'}} />;
 }
 
 export default Outline

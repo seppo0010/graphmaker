@@ -7,7 +7,7 @@ import Nodes from './Nodes';
 function Editor() {
   const [value, setValue] = useState(0)
   return (
-    <div>
+    <div style={{height: '100vh', overflow: 'auto'}}>
       <AppBar position="static">
         <Tabs value={value} onChange={(e: any, newValue: number) => setValue(newValue)}>
           <Tab label="Nodos" />
