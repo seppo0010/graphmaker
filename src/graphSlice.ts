@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { nanoid } from 'nanoid'
 
-export type Color = 'white' | 'red' | 'blue' | 'yellow'
+export type Color = 'white' | 'red' | 'blue' | 'yellow' | 'black'
 export type Shape = 'star' | 'box' | 'ellipsis' | 'triangle'
 
 interface WithId {
@@ -17,6 +17,7 @@ export interface Node extends WithId {
 export interface Edge extends WithId {
   from: number
   to: number
+  color: Color
 }
 
 interface GraphState {
@@ -37,10 +38,10 @@ const initialState: GraphState = {
     { id: 5, label: 'Node 5', color: 'white', shape: 'box' },
   ],
   edges: [
-    { id: 1, from: 1, to: 2 },
-    { id: 2, from: 1, to: 3 },
-    { id: 3, from: 2, to: 4 },
-    { id: 4, from: 2, to: 5 }
+    { id: 1, from: 1, to: 2, color: 'black' },
+    { id: 2, from: 1, to: 3, color: 'black' },
+    { id: 3, from: 2, to: 4, color: 'black' },
+    { id: 4, from: 2, to: 5, color: 'black' }
   ],
 }
 
@@ -79,8 +80,18 @@ const graphSlice = createSlice({
       },
       prepare(data: any) { return { id: nanoid(), payload: data } as any },
     },
+    setEdgeColor: {
+      reducer(state, action) {
+        const edge = state.edges.find((n) => n.id === action.payload.edge.id)
+        if (!edge) {
+          return
+        }
+        edge.color = action.payload.color
+      },
+      prepare(data: any) { return { id: nanoid(), payload: data } as any },
+    },
   },
 })
 
-export const { addNode, setNodeColor, setNodeShape } = graphSlice.actions
+export const { addNode, setNodeColor, setNodeShape, setEdgeColor } = graphSlice.actions
 export default graphSlice.reducer

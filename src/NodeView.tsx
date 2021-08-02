@@ -7,36 +7,9 @@ import BoxIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import CircleIcon from '@material-ui/icons/RadioButtonUnchecked';
 import TriangleIcon from '@material-ui/icons/ChangeHistory';
 
-import { setNodeColor, setNodeShape } from './graphSlice'
-import type { Node, Color, Shape } from './graphSlice'
-
-const colors: Color[] = ['white', 'red', 'blue', 'yellow']
-function ColorOption({node, color, ...props}: {node: Node, color: Color}) {
-  const dispatch = useDispatch()
-  return <Button style={{
-    width: 30,
-    minWidth: 30,
-    height: 30,
-    borderWidth: 4,
-    borderColor: node.color === color ? 'red' : 'black',
-    borderStyle: 'solid',
-    margin: 8,
-    background: color,
-    ...props
-  }} onClick={() => {
-    dispatch(setNodeColor({ node, color }))
-  }}></Button>
-}
-
-function ColorPicker({node}: {node: Node}) {
-  return (
-    <div style={{display: 'flex', marginLeft: -8}}>
-      {colors.map((c) => (
-        <ColorOption key={c} node={node} color={c} />
-      ))}
-    </div>
-  )
-}
+import ColorPickerView from './ColorPickerView'
+import { Color, setNodeColor, setNodeShape } from './graphSlice'
+import type { Node, Shape } from './graphSlice'
 
 function ShapeOption({node, shape, ...props}: {node: Node, shape: Shape}) {
   const dispatch = useDispatch()
@@ -72,7 +45,13 @@ function NodeView({node}: {node: Node}) {
   return (
     <li style={{listStyleType: 'none', margin: 0}}>
       {node.label}
-      <ColorPicker node={node} />
+      <ColorPickerView
+        colorDispatchable={{
+          colorable: node,
+          dispatchable: (color: Color) => setNodeColor({node, color}),
+        }}
+        colors={['white', 'red', 'blue', 'yellow']}
+        />
       <ShapePicker node={node} />
     </li>
   )
