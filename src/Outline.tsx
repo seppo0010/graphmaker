@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useSelector } from 'react-redux'
-import { Network } from 'vis-network/standalone/umd/vis-network.min'
+import { Network } from 'vis-network'
+import Button from '@material-ui/core/Button';
 
+import type { Node, Edge } from './graphSlice'
 import type { RootState } from './store'
 
 function Outline() {
@@ -31,7 +33,29 @@ function Outline() {
     }
   }, [visJsRef, currentGraph, network]);
 
-  return <div ref={visJsRef} style={{width: '100%', height: '100vh'}} />;
+  const download = () => {
+    const nodes = Object.fromEntries(graph.nodes.map((node: Node) => [node.id, node]))
+    let text = 'digraph {\n'
+    text += graph.nodes.map((n: Node) => `  "${n.label}"[shape=${n.shape}][color=${n.color}]`).join('\n') + '\n'
+    text += graph.edges.map((e: Edge) => `  "${nodes[e.from].label}"->"${nodes[e.to].label}"[color=${e.color}]`).join('\n') + '\n'
+    text += '}'
+    const filename = 'graph.dot'
+    const element = document.createElement('a');
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+    element.setAttribute('download', filename);
+
+    element.style.display = 'none';
+    document.body.appendChild(element);
+
+    element.click();
+
+    document.body.removeChild(element);
+  }
+
+  return <>
+    <Button onClick={download}>Download as DOT</Button>
+    <div ref={visJsRef} style={{width: '100%', height: '100vh'}} />;
+  </>
 }
 
 export default Outline
