@@ -20,8 +20,13 @@ function Outline() {
       setVersion((parseInt(version) + 1).toString())
     }
     if (network) {
-      (network as any).body.data.nodes.update(graph.nodes);
-      (network as any).body.data.edges.update(graph.edges);
+      const n = network as any
+      const nodes = graph.nodes
+      const nodeIds = graph.nodes.map((n) => n.id)
+      const removedNodes = JSON.parse(previousGraph).nodes.filter((n: Node) => nodeIds.indexOf(n.id) === -1)
+      n.body.data.nodes.remove(removedNodes)
+      n.body.data.nodes.update(nodes);
+      n.body.data.edges.update(graph.edges);
     }
   }, [setPreviousGraph, graph, previousGraph, version, network])
 
