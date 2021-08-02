@@ -33,7 +33,7 @@ function Outline() {
     }
   }, [visJsRef, currentGraph, network]);
 
-  const download = () => {
+  const downloadAsDOT = () => {
     const nodes = Object.fromEntries(graph.nodes.map((node: Node) => [node.id, node]))
     let text = 'digraph {\n'
     text += graph.nodes.map((n: Node) => `  "${n.label}"[shape=${n.shape}][color=${n.color}]`).join('\n') + '\n'
@@ -52,8 +52,26 @@ function Outline() {
     document.body.removeChild(element);
   }
 
+  const downloadAsPNG = () => {
+    const dt = visJsRef?.current?.getElementsByTagName('canvas')[0]
+    if (!dt) return
+    const href = dt.toDataURL().replace(/^data:image\/[^;]/, 'data:application/octet-stream');
+    const filename = 'graph.png'
+    const element = document.createElement('a');
+    element.setAttribute('href', href)
+    element.setAttribute('download', filename);
+
+    element.style.display = 'none';
+    document.body.appendChild(element);
+
+    element.click();
+
+    document.body.removeChild(element);
+  }
+
   return <>
-    <Button onClick={download}>Download as DOT</Button>
+    <Button onClick={downloadAsDOT}>Download as DOT</Button>
+    <Button onClick={downloadAsPNG}>Download as PNG</Button>
     <div ref={visJsRef} style={{width: '100%', height: '100vh'}} />;
   </>
 }
