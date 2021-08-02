@@ -1,21 +1,31 @@
-import React, { useState } from 'react'
-import { useSelector } from 'react-redux'
+import React, { useState, useEffect } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import SearchIcon from '@material-ui/icons/Search';
 import ClearIcon from '@material-ui/icons/Clear';
 import IconButton from '@material-ui/core/IconButton';
 import InputAdornment from '@material-ui/core/InputAdornment';
+import Autocomplete from '@material-ui/lab/Autocomplete';
 
 import EdgeView from './EdgeView'
-import { Node, Edge } from './graphSlice'
+import { Node, Edge, addEdge } from './graphSlice'
 import type { RootState } from './store'
 
 function EdgesView() {
-  const newEdge = () => {}
+  const dispatch = useDispatch()
   const edges = useSelector((state: RootState) => state.graph.edges)
-  const nodes = Object.fromEntries(useSelector((state: RootState) => state.graph.nodes).map((node: Node) => [node.id, node]))
+  const nodes = useSelector((state: RootState) => state.graph.nodes)
+  const nodesById = Object.fromEntries(nodes.map((node: Node) => [node.id, node]))
   const [searchCriteria, setSearchCriteria] = useState('')
+  const [newEdgeFrom, setNewEdgeFrom] = useState<Node | null>(null)
+  const [newEdgeTo, setNewEdgeTo] = useState<Node | null>(null)
+  useEffect(() => {
+    if (!newEdgeFrom || !newEdgeTo) return
+    dispatch(addEdge({'from': newEdgeFrom, to: newEdgeTo}))
+    setNewEdgeFrom(null)
+    setNewEdgeTo(null)
+  }, [setNewEdgeFrom, setNewEdgeTo, newEdgeFrom, newEdgeTo, dispatch])
   return (
     <div>
       <Typography variant="h5" component="h2" gutterBottom>
@@ -46,14 +56,37 @@ function EdgesView() {
           ),
         }}
       />
-      <TextField
-        fullWidth
-        label="Agregar conector..."
-        onBlur={newEdge}
+      <Autocomplete
+        options={nodes}
+        getOptionLabel={(option) => option.label}
+        onChange={(_, value) => setNewEdgeFrom(value)}
+        value={newEdgeFrom}
+        blurOnSelect
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            fullWidth
+            label="Agregar conector desde..."
+            />
+          )}
+        />
+      <Autocomplete
+        options={nodes}
+        getOptionLabel={(option) => option.label}
+        blurOnSelect
+        onChange={(_, value) => setNewEdgeTo(value)}
+        value={newEdgeTo}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            fullWidth
+            label="Agregar conector hacia..."
+            />
+          )}
         />
       <ul style={{padding: 0}}>
         {edges.map((edge: Edge) => (
-          <EdgeView key={edge.id} edge={edge} from={nodes[edge.from]} to={nodes[edge.to]} />
+          <EdgeView key={edge.id} edge={edge} from={nodesById[edge.from]} to={nodesById[edge.to]} />
         ))}
       </ul>
     </div>

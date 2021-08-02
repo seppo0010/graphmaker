@@ -70,9 +70,11 @@ function Outline() {
   }
 
   return <>
-    <Button onClick={downloadAsDOT}>Download as DOT</Button>
-    <Button onClick={downloadAsPNG}>Download as PNG</Button>
-    <div ref={visJsRef} style={{width: '100%', height: '100vh'}} />;
+    <div style={{position: 'absolute', top: 0, right: 0, background: 'white', zIndex: 1}}>
+      <Button onClick={downloadAsDOT}>Download as DOT</Button>
+      <Button onClick={downloadAsPNG}>Download as PNG</Button>
+    </div>
+    <div ref={visJsRef} style={{width: '100%', height: '100vh'}} />
   </>
 }
 

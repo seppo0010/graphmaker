@@ -60,6 +60,17 @@ const graphSlice = createSlice({
       },
       prepare(data: any) { return { id: nanoid(), payload: data } as any },
     },
+    addEdge: {
+      reducer(state, action) {
+        state.edges.push({
+          id: newId(state.nodes),
+          from: action.payload.from.id,
+          to: action.payload.to.id,
+          color: 'black',
+        })
+      },
+      prepare(data: any) { return { id: nanoid(), payload: data } as any },
+    },
     setNodeColor: {
       reducer(state, action) {
         const node = state.nodes.find((n) => n.id === action.payload.node.id)
@@ -93,5 +104,5 @@ const graphSlice = createSlice({
   },
 })
 
-export const { addNode, setNodeColor, setNodeShape, setEdgeColor } = graphSlice.actions
+export const { addNode, addEdge, setNodeColor, setNodeShape, setEdgeColor } = graphSlice.actions
 export default graphSlice.reducer
