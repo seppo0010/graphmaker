@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { Network } from 'vis-network'
 import Button from '@material-ui/core/Button';
+import dotparse, { NodeStatement, EdgeStatement } from 'dotparser'
 
-import type { Node, Edge } from './graphSlice'
+import { Node, Edge, setGraph } from './graphSlice'
 import type { RootState } from './store'
 
 function Outline() {
@@ -12,6 +13,7 @@ function Outline() {
   const [currentGraph, setCurrentGraph] = useState<null | typeof graph>(null)
   const [previousGraph, setPreviousGraph] = useState('')
   const [network, setNetwork] = useState<Network | null>(null)
+  const dispatch = useDispatch()
   useEffect(() => {
     const j = JSON.stringify(graph)
     if (j !== previousGraph) {
@@ -47,6 +49,58 @@ function Outline() {
         }))
     }
   }, [visJsRef, currentGraph, network]);
+
+  const uploadDOT = () => {
+    const element = document.createElement('input');
+    element.setAttribute('type', 'file');
+
+    element.style.display = 'none';
+    document.body.appendChild(element);
+
+    element.click();
+
+    document.body.removeChild(element);
+
+    element.onchange = () => {
+      const fileToLoad = element.files![0];
+
+      const getAttribute = (name: string, attrs: {id: string, eq: string}[]) => {
+        return attrs.find((a) => a.id === name)?.eq
+      }
+      const fileReader = new FileReader();
+      fileReader.onload = function(fileLoadedEvent){
+        const textFromFileLoaded = fileLoadedEvent.target!.result;
+        const st = dotparse(textFromFileLoaded as string)
+          console.log(st)
+        const nodes = st[0].children
+            .filter((s) => s.type === 'node_stmt')
+            .map((n: NodeStatement | EdgeStatement, i) => n as NodeStatement)
+            .map((n: NodeStatement, i) => ({
+          id: i + 1,
+          label: n.node_id.id,
+          color: getAttribute('color', n.attr_list),
+          shape: getAttribute('shape', n.attr_list),
+        }))
+        const nodesByLabel = Object.fromEntries(nodes.map((n) => [n.label, n]))
+        const edges = st[0].children
+            .filter((s) => s.type === 'edge_stmt')
+            .map((n: NodeStatement | EdgeStatement, i) => n as EdgeStatement)
+            .map((n: EdgeStatement, i) => ({
+          id: i + 1,
+          from: nodesByLabel[n.edge_list[0].id].id,
+          to: nodesByLabel[n.edge_list[1].id].id,
+          color: getAttribute('color', n.attr_list),
+        }))
+        const graph = {
+          nodes,
+          edges,
+        }
+        dispatch(setGraph(graph))
+      };
+
+      fileReader.readAsText(fileToLoad, "UTF-8");
+    }
+  }
 
   const downloadAsDOT = () => {
     const nodes = Object.fromEntries(graph.nodes.map((node: Node) => [node.id, node]))
@@ -86,6 +140,7 @@ function Outline() {
 
   return <>
     <div style={{position: 'absolute', top: 0, right: 0, background: 'white', zIndex: 1}}>
+      <Button onClick={uploadDOT}>Upload DOT</Button>
       <Button onClick={downloadAsDOT}>Download as DOT</Button>
       <Button onClick={downloadAsPNG}>Download as PNG</Button>
     </div>
