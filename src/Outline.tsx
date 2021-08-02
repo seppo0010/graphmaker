@@ -29,7 +29,16 @@ function Outline() {
   useEffect(() => {
     if (!network) {
       setNetwork(visJsRef.current && currentGraph &&
-        new Network(visJsRef.current, currentGraph, {physics: {enabled: false}}))
+        new Network(visJsRef.current, currentGraph, {
+          physics: {enabled: false},
+          edges: {
+            arrows: {
+              to: {
+                enabled: true,
+              }
+            }
+          },
+        }))
     }
   }, [visJsRef, currentGraph, network]);
 
