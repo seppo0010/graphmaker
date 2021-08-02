@@ -27,6 +27,7 @@ function Outline() {
       n.body.data.nodes.remove(removedNodes)
       n.body.data.nodes.update(nodes);
       n.body.data.edges.update(graph.edges);
+      n.stabilize(1000)
     }
   }, [setPreviousGraph, graph, previousGraph, version, network])
 
