@@ -15,10 +15,12 @@ function NodesView() {
   const dispatch = useDispatch()
   const graph = useSelector((state: RootState) => state.graph)
   const [searchCriteria, setSearchCriteria] = useState('')
+  const [newNodeLabel, setNewNodeLabel] = useState('')
   const newNode = (evt: React.FocusEvent<HTMLInputElement>) => {
     const label = evt.target.value;
     if (label) {
       dispatch(addNode({ label, color: 'white' }))
+      setNewNodeLabel('')
     }
   }
   return (
@@ -55,6 +57,9 @@ function NodesView() {
         fullWidth
         label="Agregar nodo..."
         onBlur={newNode}
+        value={newNodeLabel}
+        onChange={(evt) => setNewNodeLabel(evt.target.value)}
+        onKeyPress={(evt) => evt.key === 'Enter' && (evt.target as HTMLInputElement).blur()}
         />
       <ul style={{padding: 0}}>
         {graph.nodes.map((node: Node) => (
