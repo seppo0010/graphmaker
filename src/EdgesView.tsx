@@ -8,12 +8,13 @@ import IconButton from '@material-ui/core/IconButton';
 import InputAdornment from '@material-ui/core/InputAdornment';
 
 import EdgeView from './EdgeView'
-import { Edge } from './graphSlice'
+import { Node, Edge } from './graphSlice'
 import type { RootState } from './store'
 
 function EdgesView() {
   const newEdge = () => {}
-  const graph = useSelector((state: RootState) => state.graph)
+  const edges = useSelector((state: RootState) => state.graph.edges)
+  const nodes = Object.fromEntries(useSelector((state: RootState) => state.graph.nodes).map((node: Node) => [node.id, node]))
   const [searchCriteria, setSearchCriteria] = useState('')
   return (
     <div>
@@ -51,8 +52,8 @@ function EdgesView() {
         onBlur={newEdge}
         />
       <ul style={{padding: 0}}>
-        {graph.edges.map((edge: Edge) => (
-          <EdgeView key={edge.id} edge={edge} />
+        {edges.map((edge: Edge) => (
+          <EdgeView key={edge.id} edge={edge} from={nodes[edge.from]} to={nodes[edge.to]} />
         ))}
       </ul>
     </div>

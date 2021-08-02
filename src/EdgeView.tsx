@@ -1,12 +1,12 @@
 import React from 'react'
 
-import { Edge, Color, setEdgeColor } from './graphSlice'
+import { Node, Edge, Color, setEdgeColor } from './graphSlice'
 import ColorPickerView from './ColorPickerView'
 
-function EdgeView({edge}: {edge: Edge}) {
+function EdgeView({edge, from, to}: {edge: Edge, from: Node, to: Node}) {
   return (
     <li style={{listStyleType: 'none', margin: 0}}>
-      {edge.from} - {edge.to}
+      {from.label} - {to.label}
       <ColorPickerView
         colorDispatchable={{
           colorable: edge,
