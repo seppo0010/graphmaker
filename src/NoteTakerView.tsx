@@ -1,11 +1,12 @@
-import React, { useState, useEffect, useRef } from 'react'
-import { useDispatch } from 'react-redux'
+import React, { useEffect, useRef } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
 import TextField from '@material-ui/core/TextField';
 
 import { updateText } from './graphSlice'
+import type { RootState } from './store'
 
 function NoteTakerView() {
-  const [text, setText] = useState('')
+  const markdown = useSelector((state: RootState) => state.graph.text)
   const dispatch = useDispatch()
   const ref = useRef<HTMLTextAreaElement>()
   useEffect(() => {
@@ -18,9 +19,8 @@ function NoteTakerView() {
         fullWidth
         inputProps={{style: {minHeight: 400}}}
         inputRef={ref}
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-        onBlur={() => dispatch(updateText(text))}
+        value={markdown}
+        onChange={(e) => dispatch(updateText(e.target.value))}
         />
     </div>
   )

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
+import ReactMarkdown from 'react-markdown'
 import { useSelector, useDispatch } from 'react-redux'
 import { Network } from 'vis-network'
 import Button from '@material-ui/core/Button';
@@ -7,13 +8,14 @@ import dotparse, { NodeStatement, EdgeStatement } from 'dotparser'
 import { Node, Edge, setGraph } from './graphSlice'
 import type { RootState } from './store'
 
-function Outline() {
+function Outline({tab}: {tab: number}) {
   const graph = useSelector((state: RootState) => state.graph)
   const [version, setVersion] = useState('0')
   const [currentGraph, setCurrentGraph] = useState<null | typeof graph>(null)
   const [previousGraph, setPreviousGraph] = useState('')
   const [network, setNetwork] = useState<Network | null>(null)
   const dispatch = useDispatch()
+  const markdown = useSelector((state: RootState) => state.graph.text)
   useEffect(() => {
     const j = JSON.stringify(graph)
     if (j !== previousGraph) {
@@ -149,7 +151,8 @@ function Outline() {
       <Button onClick={downloadAsDOT}>Download as DOT</Button>
       <Button onClick={downloadAsPNG}>Download as PNG</Button>
     </div>
-    <div ref={visJsRef} style={{width: '100%', height: '100vh'}} />
+    <div ref={visJsRef} style={{width: '100%', height: '100vh', display: (tab === 1 || tab === 0) ? 'block' : 'none'}} />
+    <ReactMarkdown children={markdown} />
   </>
 }
 
