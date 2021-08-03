@@ -23,6 +23,7 @@ export interface Edge extends WithId {
 interface GraphState {
   nodes: Node[]
   edges: Edge[]
+  text: string
 }
 
 const newId = (nodes: WithId[]) => {
@@ -43,6 +44,7 @@ const initialState: GraphState = {
     { id: 3, from: 2, to: 4, color: 'black' },
     { id: 4, from: 2, to: 5, color: 'black' }
   ],
+  text: '# Hello world\n',
 }
 
 const graphSlice = createSlice({
@@ -115,6 +117,12 @@ const graphSlice = createSlice({
       },
       prepare(data: any) { return { id: nanoid(), payload: data } as any },
     },
+    updateText: {
+      reducer(state, action) {
+        state.text = action.payload
+      },
+      prepare(data: any) { return { id: nanoid(), payload: data } as any },
+    },
   },
 })
 
@@ -126,5 +134,7 @@ export const {
   setEdgeColor,
   deleteNode,
   setGraph,
+  updateText,
 } = graphSlice.actions
+
 export default graphSlice.reducer

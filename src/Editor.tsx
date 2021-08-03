@@ -4,6 +4,7 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import NodesView from './NodesView';
 import EdgesView from './EdgesView';
+import NoteTakerView from './NoteTakerView'
 
 function Editor() {
   const [value, setValue] = useState(0)
@@ -24,7 +25,7 @@ function Editor() {
           <EdgesView />
         </div>
         <div hidden={value !== 2}>
-          Item Three
+          <NoteTakerView />
         </div>
       </div>
     </div>
