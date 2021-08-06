@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
+import { useHotkeys } from 'react-hotkeys-hook';
 import { useSelector, useDispatch } from 'react-redux'
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
@@ -23,6 +24,8 @@ function NodesView() {
       setNewNodeLabel('')
     }
   }
+  const inputRef = useRef<HTMLInputElement>(null)
+  useHotkeys('a', () => inputRef?.current?.focus(), {keyup: true})
   return (
     <div>
       <Typography variant="h5" component="h2" gutterBottom>
@@ -58,6 +61,7 @@ function NodesView() {
         label="Agregar nodo..."
         onBlur={newNode}
         value={newNodeLabel}
+        inputProps={{ 'ref': inputRef }}
         onChange={(evt) => setNewNodeLabel(evt.target.value)}
         onKeyPress={(evt) => evt.key === 'Enter' && (evt.target as HTMLInputElement).blur()}
         />
