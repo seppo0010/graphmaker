@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import { useDispatch } from 'react-redux'
 import Button from '@material-ui/core/Button';
 import DeleteIcon from '@material-ui/icons/Delete';
@@ -7,6 +7,7 @@ import StarIcon from '@material-ui/icons/StarBorder';
 import BoxIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import CircleIcon from '@material-ui/icons/RadioButtonUnchecked';
 import TriangleIcon from '@material-ui/icons/ChangeHistory';
+import { useHotkeys } from 'react-hotkeys-hook';
 
 import ColorPickerView from './ColorPickerView'
 import { Color, setNodeColor, setNodeShape, deleteNode } from './graphSlice'
@@ -42,12 +43,15 @@ function ShapePicker({node}: {node: Node}) {
   )
 }
 
-function NodeView({node}: {node: Node}) {
+function NodeView({node, index}: {node: Node, index: number}) {
   const dispatch = useDispatch()
   const del = () => dispatch(deleteNode(node))
+  const listRef = useRef<HTMLLIElement>(null)
+  useHotkeys((1+index).toString(), () => {
+    listRef?.current?.getElementsByTagName('button')[0].focus()
+  })
   return (
-    <li style={{listStyleType: 'none', margin: 0}}>
-      {node.label}
+    <li style={{listStyleType: 'none', margin: 0}} ref={listRef}> {node.label}
       <div style={{display: 'flex'}}>
         <div>
           <ColorPickerView

@@ -24,8 +24,18 @@ function NodesView() {
       setNewNodeLabel('')
     }
   }
-  const inputRef = useRef<HTMLInputElement>(null)
-  useHotkeys('a', () => inputRef?.current?.focus(), {keyup: true})
+  const addRef = useRef<HTMLInputElement>(null)
+  const searchRef = useRef<HTMLInputElement>(null)
+  useHotkeys('esc', () => {
+    const el = (document.activeElement as any)
+    if (!el) return;
+    const v = el.value
+    el.value = ''
+    el.blur()
+    el.value = v
+  }, {enableOnTags: ['INPUT']})
+  useHotkeys('a', () => addRef?.current?.focus(), {keyup: true})
+  useHotkeys('s', () => searchRef?.current?.focus(), {keyup: true})
   return (
     <div>
       <Typography variant="h5" component="h2" gutterBottom>
@@ -34,7 +44,7 @@ function NodesView() {
       <TextField
         fullWidth
         label="Buscar"
-        inputProps={{ 'aria-label': 'Buscar' }}
+        inputProps={{ 'aria-label': 'Buscar', 'ref': searchRef }}
         InputProps={{
           endAdornment: (
             <InputAdornment position="end">
@@ -61,13 +71,15 @@ function NodesView() {
         label="Agregar nodo..."
         onBlur={newNode}
         value={newNodeLabel}
-        inputProps={{ 'ref': inputRef }}
+        inputProps={{ 'ref': addRef }}
         onChange={(evt) => setNewNodeLabel(evt.target.value)}
         onKeyPress={(evt) => evt.key === 'Enter' && (evt.target as HTMLInputElement).blur()}
         />
       <ul style={{padding: 0}}>
-        {graph.nodes.map((node: Node) => (
-          <NodeView key={node.id}
+        {graph.nodes.map((node: Node, index: number) => (
+          <NodeView
+            key={node.id}
+            index={index}
             node={node}
             />
         ))}
