@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react'
+import { useHotkeys } from 'react-hotkeys-hook';
 import { useSelector, useDispatch } from 'react-redux'
 import TextField from '@material-ui/core/TextField';
 
@@ -12,6 +13,12 @@ function NoteTakerView() {
   useEffect(() => {
     ref?.current?.focus()
   })
+  useHotkeys('e', () => ref?.current?.focus(), {keyup: true})
+  useHotkeys('esc', () => {
+    const el = (document.activeElement as any)
+    if (!el) return;
+    el.blur()
+  }, {enableOnTags: ['TEXTAREA']})
   return (
     <div>
       <TextField
