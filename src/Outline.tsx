@@ -152,7 +152,9 @@ function Outline({tab}: {tab: number}) {
       <Button onClick={downloadAsPNG}>Download as PNG</Button>
     </div>
     <div ref={visJsRef} style={{width: '100%', height: '100vh', display: (tab === 1 || tab === 0) ? 'block' : 'none'}} />
-    <ReactMarkdown children={markdown} />
+    <div style={{width: '100%', height: '100vh', display: tab === 2 ? 'block' : 'none'}}>
+      <ReactMarkdown children={markdown} />
+    </div>
   </>
 }
 
