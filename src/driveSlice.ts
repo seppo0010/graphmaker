@@ -15,7 +15,6 @@ const driveSlice = createSlice({
   reducers: {
     setSignedIn: {
       reducer(state, action) {
-            alert(2)
         state.isSignedIn = action.payload
       },
       prepare(data: any) { return { id: nanoid(), payload: data } as any },
@@ -26,7 +25,7 @@ const driveSlice = createSlice({
 export const {
   setSignedIn
 } = driveSlice.actions
-export const init = () => async (dispatch: any) => {
+export const login = () => async (dispatch: any) => {
   return new Promise((resolve, reject) => {
     gapi.load('client:auth2', async () => {
       await gapi.client.init({
