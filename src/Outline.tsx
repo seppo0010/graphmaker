@@ -27,12 +27,12 @@ function Outline({tab}: {tab: number}) {
     if (network) {
       const n = network as any
       const nodes = graph.nodes
-      const nodeIds = graph.nodes.map((n) => n.id)
+      const nodeIds = graph.nodes.map((n: Node) => n.id)
       const removedNodes = JSON.parse(previousGraph).nodes.filter((n: Node) => nodeIds.indexOf(n.id) === -1)
       n.body.data.nodes.remove(removedNodes)
       n.body.data.nodes.update(nodes);
 
-      const edgeIds = graph.edges.map((n) => n.id)
+      const edgeIds = graph.edges.map((e: Edge) => e.id)
       const removedEdges = JSON.parse(previousGraph).edges.filter((n: Node) => edgeIds.indexOf(n.id) === -1)
       n.body.data.edges.remove(removedEdges)
       n.body.data.edges.update(graph.edges);
