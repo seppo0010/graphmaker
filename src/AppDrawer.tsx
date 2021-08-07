@@ -1,11 +1,12 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import Drawer from '@material-ui/core/Drawer';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import SaveIcon from '@material-ui/icons/Save';
+import CloudUploadIcon from '@material-ui/icons/CloudUpload';
+import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
 import PublishIcon from '@material-ui/icons/Publish';
 import ShareIcon from '@material-ui/icons/Share';
 // import ImageIcon from '@material-ui/icons/Image';
@@ -14,7 +15,8 @@ import IconButton from '@material-ui/core/IconButton';
 import Divider from '@material-ui/core/Divider';
 import dotparse, { NodeStatement, EdgeStatement } from 'dotparser'
 
-import { Node, Edge, setGraph } from './graphSlice'
+import LoadFromDrive from './LoadFromDrive'
+import { Node, Edge, setGraph, setName, setDriveId } from './graphSlice'
 import { login } from './driveSlice'
 import { setDrawerIsOpen } from './navigationSlice'
 import type { RootState } from './store'
@@ -23,6 +25,7 @@ function AppDrawer() {
   const dispatch = useDispatch()
   const graph = useSelector((state: RootState) => state.graph)
   const drawerIsOpen = useSelector((state: RootState) => state.navigation.drawerIsOpen)
+  const [loadFromDriveOpen, setLoadFromDriveOpen] = useState(false)
 
   const uploadDOT = () => {
     const element = document.createElement('input');
@@ -114,6 +117,50 @@ function AppDrawer() {
   }
   */
 
+  const saveToDrive = async () => {
+    let name;
+    if (graph.name) {
+      name = graph.name
+    } else {
+      name = prompt('name?')
+      await dispatch(setName(name))
+    }
+    await dispatch(login());
+
+    const g = {...graph}
+    g.name = name || ''
+    const fileContent = JSON.stringify({graph: g})
+    const file = new Blob([fileContent], {type: "application/json"});
+    const metadata: any = {
+      name,
+      mimeType: "application/json",
+      parents: ['appDataFolder']
+    };
+
+    const accessToken = gapi.auth.getToken().access_token;
+    const form = new FormData();
+    form.append('file', file);
+
+    if (graph.driveId) {
+      metadata.fileId = graph.driveId
+      form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
+      await fetch(`https://www.googleapis.com/upload/drive/v3/files/${graph.driveId}?uploadType=multipart&supportsAllDrives=true`, {
+        method: 'PATCH',
+        headers: new Headers({ 'Authorization': 'Bearer ' + accessToken }),
+        body: form,
+      })
+    } else {
+      form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
+      const res = await fetch("https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&supportsAllDrives=true", {
+        method: 'POST',
+        headers: new Headers({ 'Authorization': 'Bearer ' + accessToken }),
+        body: form,
+      })
+      const d = await res.json()
+      await dispatch(setDriveId(d.id))
+    }
+  }
+
   return (
     <Drawer
       open={drawerIsOpen}
@@ -125,9 +172,13 @@ function AppDrawer() {
       </div>
       <Divider />
       <List>
-        <ListItem button style={{paddingRight: 100}} onClick={login}>
-          <ListItemIcon><SaveIcon /></ListItemIcon>
+        <ListItem button style={{paddingRight: 100}} onClick={saveToDrive}>
+          <ListItemIcon><CloudUploadIcon /></ListItemIcon>
           <ListItemText primary="Save to Drive" />
+        </ListItem>
+        <ListItem button style={{paddingRight: 100}} onClick={() => setLoadFromDriveOpen(true)}>
+          <ListItemIcon><CloudDownloadIcon /></ListItemIcon>
+          <ListItemText primary="Load from Drive" />
         </ListItem>
         <ListItem button style={{paddingRight: 100}} onClick={uploadDOT}>
           <ListItemIcon><PublishIcon /></ListItemIcon>
@@ -144,6 +195,9 @@ function AppDrawer() {
         </ListItem>
         */}
       </List>
+      {loadFromDriveOpen && <LoadFromDrive
+        close={() => setLoadFromDriveOpen(false)}
+        />}
     </Drawer>
   )
 }

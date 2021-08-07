@@ -21,6 +21,8 @@ export interface Edge extends WithId {
 }
 
 interface GraphState {
+  driveId: string | null
+  name: string
   nodes: Node[]
   edges: Edge[]
   text: string
@@ -31,6 +33,8 @@ const newId = (nodes: WithId[]) => {
 }
 
 const initialState: GraphState = {
+  driveId: null,
+  name: '',
   nodes: [
     { id: 1, label: 'Node 1', color: 'red', shape: 'box' },
     { id: 2, label: 'Node 2', color: 'white', shape: 'box' },
@@ -123,6 +127,18 @@ const graphSlice = createSlice({
       },
       prepare(data: any) { return { id: nanoid(), payload: data } as any },
     },
+    setName: {
+      reducer(state, action) {
+        state.name = action.payload
+      },
+      prepare(data: any) { return { id: nanoid(), payload: data } as any },
+    },
+    setDriveId: {
+      reducer(state, action) {
+        state.driveId = action.payload
+      },
+      prepare(data: any) { return { id: nanoid(), payload: data } as any },
+    },
   },
 })
 
@@ -135,6 +151,8 @@ export const {
   deleteNode,
   setGraph,
   updateText,
+  setName,
+  setDriveId,
 } = graphSlice.actions
 
 export default graphSlice.reducer
