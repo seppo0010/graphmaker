@@ -1,10 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit'
 import { combineReducers } from "redux";
+
 import graph from './graphSlice'
+import navigation from './navigationSlice'
 
 export const store = configureStore({
   reducer: combineReducers({
     graph,
+    navigation,
   }),
 })
 

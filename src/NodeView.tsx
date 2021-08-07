@@ -7,10 +7,12 @@ import StarIcon from '@material-ui/icons/StarBorder';
 import BoxIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import CircleIcon from '@material-ui/icons/RadioButtonUnchecked';
 import TriangleIcon from '@material-ui/icons/ChangeHistory';
+import ShareIcon from '@material-ui/icons/Share';
 import { useHotkeys } from 'react-hotkeys-hook';
 
 import ColorPickerView from './ColorPickerView'
 import { Color, setNodeColor, setNodeShape, deleteNode } from './graphSlice'
+import { setTab } from './navigationSlice'
 import type { Node, Shape } from './graphSlice'
 
 function ShapeOption({node, shape, ...props}: {node: Node, shape: Shape}) {
@@ -46,7 +48,22 @@ function ShapePicker({node}: {node: Node}) {
 function NodeView({node, index}: {node: Node, index: number}) {
   const dispatch = useDispatch()
   const del = () => dispatch(deleteNode(node))
+  const connect = () => dispatch(setTab(1))
   const listRef = useRef<HTMLLIElement>(null)
+  const isActive = () => {
+    if (document.activeElement && listRef?.current) {
+      return listRef.current.contains(document.activeElement)
+    }
+    return false
+  }
+  useHotkeys('w', () => { isActive() && dispatch(setNodeColor({node, color: 'white'}))})
+  useHotkeys('y', () => { isActive() && dispatch(setNodeColor({node, color: 'yellow'}))})
+  useHotkeys('b', () => { isActive() && dispatch(setNodeColor({node, color: 'blue'}))})
+  useHotkeys('r', () => { isActive() && dispatch(setNodeColor({node, color: 'red'}))})
+  useHotkeys('*', () => { isActive() && dispatch(setNodeShape({node, shape: 'star'}))})
+  useHotkeys('q', () => { isActive() && dispatch(setNodeShape({node, shape: 'box'}))})
+  useHotkeys('c', () => { isActive() && dispatch(setNodeShape({node, shape: 'ellipsis'}))})
+  useHotkeys('t', () => { isActive() && dispatch(setNodeShape({node, shape: 'triangle'}))})
   useHotkeys((1+index).toString(), () => {
     listRef?.current?.getElementsByTagName('button')[0].focus()
   })
@@ -63,9 +80,12 @@ function NodeView({node, index}: {node: Node, index: number}) {
             />
           <ShapePicker node={node} />
         </div>
-        <div>
+        <div style={{display: 'flex', flexDirection: 'column'}}>
           <Button style={{padding: 22, minWidth: 0, width: 24, height: 24}} onClick={del}>
             <DeleteIcon />
+          </Button>
+          <Button style={{padding: 22, minWidth: 0, width: 24, height: 24}} onClick={connect}>
+            <ShareIcon />
           </Button>
         </div>
       </div>

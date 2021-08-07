@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useDispatch, useSelector } from 'react-redux'
 import { useHotkeys } from 'react-hotkeys-hook';
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
@@ -7,15 +8,19 @@ import Tab from '@material-ui/core/Tab';
 import Editor from './Editor'
 import Outline from './Outline'
 
+import { Tab as TabType, setTab } from './navigationSlice'
+import type { RootState } from './store'
+
 function App() {
-  const [tab, setTab] = useState(0)
-  useHotkeys('ctrl+1', () => setTab(0))
-  useHotkeys('ctrl+2', () => setTab(1))
-  useHotkeys('ctrl+3', () => setTab(2))
+  const dispatch = useDispatch()
+  const tab = useSelector((state: RootState) => state.navigation.tab)
+  useHotkeys('ctrl+1', () => { dispatch(setTab(0)) })
+  useHotkeys('ctrl+2', () => { dispatch(setTab(1)) })
+  useHotkeys('ctrl+3', () => { dispatch(setTab(2)) })
   return (
     <div>
       <AppBar position="static">
-        <Tabs value={tab} onChange={(e: any, newTab: number) => setTab(newTab)}>
+        <Tabs value={tab} onChange={(e: any, newTab: TabType) => dispatch(setTab(newTab))}>
           <Tab label="Nodos" />
           <Tab label="Conectores" />
           <Tab label="Texto libre" />
