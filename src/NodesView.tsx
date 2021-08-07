@@ -36,6 +36,7 @@ function NodesView() {
   }, {enableOnTags: ['INPUT']})
   useHotkeys('a', () => addRef?.current?.focus(), {keyup: true})
   useHotkeys('s', () => searchRef?.current?.focus(), {keyup: true})
+  const nodes = searchCriteria === '' ? graph.nodes : graph.nodes.filter((n) => n.label.indexOf(searchCriteria) > -1)
   return (
     <div>
       <Typography variant="h5" component="h2" gutterBottom>
@@ -44,6 +45,8 @@ function NodesView() {
       <TextField
         fullWidth
         label="Buscar"
+        value={searchCriteria}
+        onChange={(e) => setSearchCriteria(e.target.value)}
         inputProps={{ 'aria-label': 'Buscar', 'ref': searchRef }}
         InputProps={{
           endAdornment: (
@@ -57,7 +60,6 @@ function NodesView() {
             }
             {!searchCriteria &&
               <IconButton
-                onClick={() => {}}
                 >
                   <SearchIcon />
                 </IconButton>
@@ -76,7 +78,7 @@ function NodesView() {
         onKeyPress={(evt) => evt.key === 'Enter' && (evt.target as HTMLInputElement).blur()}
         />
       <ul style={{padding: 0}}>
-        {graph.nodes.map((node: Node, index: number) => (
+        {nodes.map((node: Node, index: number) => (
           <NodeView
             key={node.id}
             index={index}
