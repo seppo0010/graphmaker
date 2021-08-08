@@ -21,7 +21,6 @@ export default function LoadFromDrive({close}: {close: () => void}) {
       fileId: id,
       alt: 'media',
     });
-    console.log(f)
     await dispatch(setDriveId(id))
     await dispatch(setName(name))
     await dispatch(setGraph(JSON.parse(f.body).graph))
@@ -39,7 +38,6 @@ export default function LoadFromDrive({close}: {close: () => void}) {
       })
       setLoading(false)
       const f = JSON.parse(response.body).files
-      console.log(f)
       setFiles(f)
     })()
   })

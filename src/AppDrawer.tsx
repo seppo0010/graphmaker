@@ -48,7 +48,6 @@ function AppDrawer() {
       fileReader.onload = function(fileLoadedEvent){
         const textFromFileLoaded = fileLoadedEvent.target!.result;
         const st = dotparse(textFromFileLoaded as string)
-          console.log(st)
         const nodes = st[0].children
             .filter((s) => s.type === 'node_stmt')
             .map((n: NodeStatement | EdgeStatement, i) => n as NodeStatement)
@@ -127,38 +126,30 @@ function AppDrawer() {
     }
     await dispatch(login());
 
-    const g = {...graph}
-    g.name = name || ''
-    const fileContent = JSON.stringify({graph: g})
-    const file = new Blob([fileContent], {type: "application/json"});
-    const metadata: any = {
-      name,
-      mimeType: "application/json",
-      parents: ['appDataFolder']
-    };
-
-    const accessToken = gapi.auth.getToken().access_token;
-    const form = new FormData();
-    form.append('file', file);
-
-    if (graph.driveId) {
-      metadata.fileId = graph.driveId
-      form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
-      await fetch(`https://www.googleapis.com/upload/drive/v3/files/${graph.driveId}?uploadType=multipart&supportsAllDrives=true`, {
-        method: 'PATCH',
-        headers: new Headers({ 'Authorization': 'Bearer ' + accessToken }),
-        body: form,
+    let driveId = graph.driveId
+    if (!driveId) {
+      const response = await (gapi.client.drive as any).files.create({
+        parents: ['appDataFolder'],
+        'content-type': 'application/json',
+        uploadType: 'multipart',
+        name: name,
+        mimeType: 'application/json',
+        fields: 'id, name, kind, size'
       })
-    } else {
-      form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
-      const res = await fetch("https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&supportsAllDrives=true", {
-        method: 'POST',
-        headers: new Headers({ 'Authorization': 'Bearer ' + accessToken }),
-        body: form,
-      })
-      const d = await res.json()
-      await dispatch(setDriveId(d.id))
+      await dispatch(setDriveId(response.result.id))
+      driveId = response.result.id
     }
+
+    const g = {name: name || '', edges: graph.edges, nodes: graph.nodes, driveId: driveId}
+    const body = JSON.stringify({graph: g});
+    await fetch(`https://www.googleapis.com/upload/drive/v3/files/${driveId}`, {
+     method: 'PATCH',
+     headers: new Headers({
+       'Authorization': `Bearer ${gapi.client.getToken().access_token}`,
+       'Content-Type': 'application/json'
+     }),
+     body,
+    })
   }
 
   return (
