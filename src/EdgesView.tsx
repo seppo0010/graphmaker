@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
+import { useHotkeys } from 'react-hotkeys-hook';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import SearchIcon from '@material-ui/icons/Search';
@@ -14,9 +15,8 @@ import type { RootState } from './store'
 
 function EdgesView() {
   const dispatch = useDispatch()
-  const edges = useSelector((state: RootState) => state.graph.edges)
-  const nodes = useSelector((state: RootState) => state.graph.nodes)
-  const nodesById = Object.fromEntries(nodes.map((node: Node) => [node.id, node]))
+  const graph = useSelector((state: RootState) => state.graph)
+  const nodesById = Object.fromEntries(graph.nodes.map((node: Node) => [node.id, node]))
   const [searchCriteria, setSearchCriteria] = useState('')
   const [newEdgeFrom, setNewEdgeFrom] = useState<Node | null>(null)
   const [newEdgeTo, setNewEdgeTo] = useState<Node | null>(null)
@@ -26,6 +26,23 @@ function EdgesView() {
     setNewEdgeFrom(null)
     setNewEdgeTo(null)
   }, [setNewEdgeFrom, setNewEdgeTo, newEdgeFrom, newEdgeTo, dispatch])
+
+  const addRef = useRef<HTMLInputElement>(null)
+  const searchRef = useRef<HTMLInputElement>(null)
+  useHotkeys('esc', () => {
+    const el = (document.activeElement as any)
+    if (!el) return;
+    const v = el.value
+    el.value = ''
+    el.blur()
+    el.value = v
+  }, {enableOnTags: ['INPUT']})
+  useHotkeys('a', () => {
+    (addRef?.current?.getElementsByTagName('INPUT')[0] as HTMLInputElement).focus()
+  }, {keyup: true})
+  useHotkeys('s', () => searchRef?.current?.focus(), {keyup: true})
+  const edges = searchCriteria === '' ? graph.edges : graph.edges.filter((e: Edge) => nodesById[e.from].label.indexOf(searchCriteria) > -1 || nodesById[e.to].label.indexOf(searchCriteria) > -1)
+
   return (
     <div>
       <Typography variant="h5" component="h2" gutterBottom>
@@ -34,7 +51,9 @@ function EdgesView() {
       <TextField
         fullWidth
         label="Buscar"
-        inputProps={{ 'aria-label': 'Buscar' }}
+        value={searchCriteria}
+        onChange={(e) => setSearchCriteria(e.target.value)}
+        inputProps={{ 'aria-label': 'Buscar', ref: searchRef }}
         InputProps={{
           endAdornment: (
             <InputAdornment position="end">
@@ -57,11 +76,12 @@ function EdgesView() {
         }}
       />
       <Autocomplete
-        options={nodes}
+        options={graph.nodes}
         getOptionLabel={(option) => option.label}
         onChange={(_, value) => setNewEdgeFrom(value)}
         value={newEdgeFrom}
         blurOnSelect
+        ref={addRef}
         renderInput={(params) => (
           <TextField
             {...params}
@@ -71,7 +91,7 @@ function EdgesView() {
           )}
         />
       <Autocomplete
-        options={nodes}
+        options={graph.nodes}
         getOptionLabel={(option) => option.label}
         blurOnSelect
         onChange={(_, value) => setNewEdgeTo(value)}
