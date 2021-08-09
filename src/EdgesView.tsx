@@ -85,8 +85,14 @@ function EdgesView() {
           )}
         />
       <ul style={{padding: 0}}>
-        {edges.map((edge: Edge) => (
-          <EdgeView key={edge.id} edge={edge} from={nodesById[edge.from]} to={nodesById[edge.to]} />
+        {edges.map((edge: Edge, index: number) => (
+          <EdgeView
+            key={edge.id}
+            index={index}
+            edge={edge}
+            from={nodesById[edge.from]}
+            to={nodesById[edge.to]}
+            />
         ))}
       </ul>
     </div>
