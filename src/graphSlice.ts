@@ -77,6 +77,16 @@ const graphSlice = createSlice({
       },
       prepare(data: any) { return { id: nanoid(), payload: data } as any },
     },
+    setNodeLabel: {
+      reducer(state, action) {
+        const node = state.nodes.find((n) => n.id === action.payload.node.id)
+        if (!node) {
+          return
+        }
+        node.label = action.payload.label
+      },
+      prepare(data: any) { return { id: nanoid(), payload: data } as any },
+    },
     setNodeColor: {
       reducer(state, action) {
         const node = state.nodes.find((n) => n.id === action.payload.node.id)
@@ -153,6 +163,7 @@ export const {
   updateText,
   setName,
   setDriveId,
+  setNodeLabel,
 } = graphSlice.actions
 
 export default graphSlice.reducer
