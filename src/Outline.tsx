@@ -42,6 +42,13 @@ function Outline({tab}: {tab: number}) {
       setNetwork(visJsRef.current && currentGraph &&
         new Network(visJsRef.current, currentGraph, {
           physics: {enabled: false},
+          layout: {
+            hierarchical: {
+              enabled: true,
+              direction: 'LR',
+              sortMethod: 'directed',
+            }
+          },
           edges: {
             arrows: {
               to: {
