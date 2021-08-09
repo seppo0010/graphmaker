@@ -60,7 +60,7 @@ function NodeView({node, index}: {node: Node, index: number}) {
   useHotkeys('y', () => { isActive() && dispatch(setNodeColor({node, color: 'yellow'}))})
   useHotkeys('b', () => { isActive() && dispatch(setNodeColor({node, color: 'blue'}))})
   useHotkeys('r', () => { isActive() && dispatch(setNodeColor({node, color: 'red'}))})
-  useHotkeys('*', () => { isActive() && dispatch(setNodeShape({node, shape: 'star'}))})
+  useHotkeys('*', (e: any) => { e.key === '*' && isActive() && dispatch(setNodeShape({node, shape: 'star'}))})
   useHotkeys('q', () => { isActive() && dispatch(setNodeShape({node, shape: 'box'}))})
   useHotkeys('c', () => { isActive() && dispatch(setNodeShape({node, shape: 'ellipsis'}))})
   useHotkeys('t', () => { isActive() && dispatch(setNodeShape({node, shape: 'triangle'}))})
