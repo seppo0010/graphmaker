@@ -107,6 +107,13 @@ const graphSlice = createSlice({
       },
       prepare(data: any) { return { id: nanoid(), payload: data } as any },
     },
+    deleteNode: {
+      reducer(state, action) {
+        state.nodes = state.nodes.filter((n) => n.id !== action.payload.id)
+        state.edges = state.edges.filter((e) => e.from !== action.payload.id && e.to !== action.payload.id)
+      },
+      prepare(data: any) { return { id: nanoid(), payload: data } as any },
+    },
     setEdgeColor: {
       reducer(state, action) {
         const edge = state.edges.find((n) => n.id === action.payload.edge.id)
@@ -117,10 +124,9 @@ const graphSlice = createSlice({
       },
       prepare(data: any) { return { id: nanoid(), payload: data } as any },
     },
-    deleteNode: {
+    deleteEdge: {
       reducer(state, action) {
-        state.nodes = state.nodes.filter((n) => n.id !== action.payload.id)
-        state.edges = state.edges.filter((e) => e.from !== action.payload.id && e.to !== action.payload.id)
+        state.edges = state.edges.filter((e) => e.id !== action.payload.id)
       },
       prepare(data: any) { return { id: nanoid(), payload: data } as any },
     },
@@ -157,8 +163,9 @@ export const {
   addEdge,
   setNodeColor,
   setNodeShape,
-  setEdgeColor,
   deleteNode,
+  setEdgeColor,
+  deleteEdge,
   setGraph,
   updateText,
   setName,
