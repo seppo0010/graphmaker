@@ -124,7 +124,13 @@ function AppDrawer() {
       name = prompt('name?')
       await dispatch(setName(name))
     }
-    await dispatch(login());
+    try {
+      await dispatch(login());
+    } catch (e) {
+      // FIXME: setError...
+      alert(e.details)
+      return
+    }
 
     let driveId = graph.driveId
     if (!driveId) {

@@ -29,7 +29,13 @@ export default function LoadFromDrive({close}: {close: () => void}) {
 
   useState(() => {
     (async () => {
-      await dispatch(login());
+      try {
+        await dispatch(login());
+      } catch (e) {
+        // FIXME: setError...
+        alert(e.details)
+        return
+      }
       const response = await (gapi.client as any).drive.files.list({
         spaces: 'appDataFolder',
         pageSize: 50,
@@ -44,18 +50,20 @@ export default function LoadFromDrive({close}: {close: () => void}) {
 
   return (
     <Dialog onClose={close} aria-labelledby="simple-dialog-title" open={true}>
-      <DialogTitle id="simple-dialog-title">
+      <DialogTitle id="simple-dialog-title" style={{minWidth: 400}}>
         Cargar desde Drive
         <IconButton><CloseIcon onClick={close} /></IconButton>
       </DialogTitle>
-      {loading && <div style={{textAlign: 'center'}}><CircularProgress /></div>}
-      {!loading && <List>
-        {files.map((file) => (
-          <ListItem button onClick={() => handleListItemClick(file)} key={file.id}>
-            <ListItemText primary={file.name} />
-          </ListItem>
-        ))}
-      </List>}
+      <div style={{minHeight: 100}}>
+        {loading && <div style={{textAlign: 'center'}}><CircularProgress /></div>}
+        {!loading && <List>
+          {files.map((file) => (
+            <ListItem button onClick={() => handleListItemClick(file)} key={file.id}>
+              <ListItemText primary={file.name} />
+            </ListItem>
+          ))}
+        </List>}
+      </div>
     </Dialog>
   );
 }
