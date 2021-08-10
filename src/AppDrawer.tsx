@@ -128,7 +128,7 @@ function AppDrawer() {
       await dispatch(login());
     } catch (e) {
       // FIXME: setError...
-      alert(e.details)
+      alert(e.details || e.error)
       return
     }
 

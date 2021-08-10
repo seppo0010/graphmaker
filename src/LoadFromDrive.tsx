@@ -33,7 +33,7 @@ export default function LoadFromDrive({close}: {close: () => void}) {
         await dispatch(login());
       } catch (e) {
         // FIXME: setError...
-        alert(e.details)
+        alert(e.details || e.error)
         return
       }
       const response = await (gapi.client as any).drive.files.list({
