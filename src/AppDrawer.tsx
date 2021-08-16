@@ -16,8 +16,8 @@ import Divider from '@material-ui/core/Divider';
 import dotparse, { NodeStatement, EdgeStatement } from 'dotparser'
 
 import LoadFromDrive from './LoadFromDrive'
-import { Node, Edge, setGraph, setName, setDriveId } from './graphSlice'
-import { login } from './driveSlice'
+import { Node, Edge, setGraph } from './graphSlice'
+import { saveToDrive } from './driveSlice'
 import { setDrawerIsOpen } from './navigationSlice'
 import type { RootState } from './store'
 
@@ -116,54 +116,6 @@ function AppDrawer() {
   }
   */
 
-  const saveToDrive = async () => {
-    let name;
-    if (graph.name) {
-      name = graph.name
-    } else {
-      name = prompt('name?')
-      await dispatch(setName(name))
-    }
-    try {
-      await dispatch(login());
-    } catch (e) {
-      // FIXME: setError...
-      alert(e.details || e.error)
-      return
-    }
-
-    let driveId = graph.driveId
-    if (!driveId) {
-      const response = await (gapi.client.drive as any).files.create({
-        parents: ['appDataFolder'],
-        'content-type': 'application/json',
-        uploadType: 'multipart',
-        name: name,
-        mimeType: 'application/json',
-        fields: 'id, name, kind, size'
-      })
-      await dispatch(setDriveId(response.result.id))
-      driveId = response.result.id
-    }
-
-    const g = {
-      name: name || '',
-      edges: graph.edges,
-      nodes: graph.nodes,
-      driveId: driveId,
-      text: graph.text,
-    }
-    const body = JSON.stringify({graph: g});
-    await fetch(`https://www.googleapis.com/upload/drive/v3/files/${driveId}`, {
-     method: 'PATCH',
-     headers: new Headers({
-       'Authorization': `Bearer ${gapi.client.getToken().access_token}`,
-       'Content-Type': 'application/json'
-     }),
-     body,
-    })
-  }
-
   return (
     <Drawer
       open={drawerIsOpen}
@@ -175,7 +127,7 @@ function AppDrawer() {
       </div>
       <Divider />
       <List>
-        <ListItem button style={{paddingRight: 100}} onClick={saveToDrive}>
+        <ListItem button style={{paddingRight: 100}} onClick={() => dispatch(saveToDrive())}>
           <ListItemIcon><CloudUploadIcon /></ListItemIcon>
           <ListItemText primary="Save to Drive" />
         </ListItem>
