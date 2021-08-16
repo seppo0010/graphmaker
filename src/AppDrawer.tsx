@@ -146,7 +146,13 @@ function AppDrawer() {
       driveId = response.result.id
     }
 
-    const g = {name: name || '', edges: graph.edges, nodes: graph.nodes, driveId: driveId}
+    const g = {
+      name: name || '',
+      edges: graph.edges,
+      nodes: graph.nodes,
+      driveId: driveId,
+      text: graph.text,
+    }
     const body = JSON.stringify({graph: g});
     await fetch(`https://www.googleapis.com/upload/drive/v3/files/${driveId}`, {
      method: 'PATCH',
