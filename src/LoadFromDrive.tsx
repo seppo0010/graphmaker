@@ -10,6 +10,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import IconButton from '@material-ui/core/IconButton';
 
 import { setGraph, setName, setDriveId } from './graphSlice'
+import { setDrawerIsOpen } from './navigationSlice'
 import { login } from './driveSlice'
 
 export default function LoadFromDrive({close}: {close: () => void}) {
@@ -24,6 +25,7 @@ export default function LoadFromDrive({close}: {close: () => void}) {
     await dispatch(setDriveId(id))
     await dispatch(setName(name))
     await dispatch(setGraph(JSON.parse(f.body).graph))
+    await dispatch(setDrawerIsOpen(false))
     close()
   };
 
