@@ -80,11 +80,11 @@ function AppDrawer() {
 
   const downloadAsDOT = () => {
     const nodes = Object.fromEntries(graph.nodes.map((node: Node) => [node.id, node]))
-    let text = 'digraph {\n'
+    let text = 'digraph {\n  rankdir=LR;\n'
     text += graph.nodes.map((n: Node) => `  "${n.label}"[shape=${n.shape}][color=${n.color}]`).join('\n') + '\n'
     text += graph.edges.map((e: Edge) => `  "${nodes[e.from].label}"->"${nodes[e.to].label}"[color=${e.color}]`).join('\n') + '\n'
     text += '}'
-    const filename = 'graph.dot'
+    const filename = (graph.name || 'graph') + '.dot'
     const element = document.createElement('a');
     element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
     element.setAttribute('download', filename);
