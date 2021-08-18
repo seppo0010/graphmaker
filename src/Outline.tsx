@@ -44,9 +44,10 @@ function Outline({tab}: {tab: number}) {
           physics: {enabled: false},
           layout: {
             hierarchical: {
+              nodeSpacing: 200,
               enabled: true,
               direction: 'LR',
-              sortMethod: 'directed',
+              sortMethod: 'hubsize',
             }
           },
           edges: {
