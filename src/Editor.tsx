@@ -5,7 +5,7 @@ import NoteTakerView from './NoteTakerView'
 
 function Editor({tab}: {tab: number}) {
   return (
-    <div style={{height: '100vh', overflow: 'auto'}}>
+    <div style={{height: 'calc(-48px + 100vh)', overflow: 'auto'}}>
       <div style={{padding: 20}}>
         <div hidden={tab !== 0}>
           <NodesView />

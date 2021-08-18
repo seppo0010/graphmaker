@@ -52,6 +52,8 @@ function App() {
       </AppBar>
       <div className="App" style={{
         display: 'flex',
+        overflow: 'hidden',
+        height: 'calc(100vh - 48px)',
       }}>
         <div style={{flex: 1}}>
           <Editor tab={tab} />
