@@ -47,7 +47,7 @@ function ShapePicker({node}: {node: Node}) {
   )
 }
 
-function NodeView({node, index}: {node: Node, index: number}) {
+function NodeView({node, index, visible}: {node: Node, index: number, visible: boolean}) {
   const dispatch = useDispatch()
   const editingRef = useRef<HTMLInputElement | null>(null)
   const [editing, doSetEditing] = useState(false)
@@ -85,7 +85,7 @@ function NodeView({node, index}: {node: Node, index: number}) {
     listRef?.current?.getElementsByTagName('button')[0].focus()
   })
   return (
-    <li style={{listStyleType: 'none', margin: 0}} ref={listRef}>
+    <li style={{listStyleType: 'none', margin: 0, display: visible ? 'block' : 'none'}} ref={listRef}>
       <TextField
         fullWidth
         value={label}
@@ -129,4 +129,4 @@ function NodeView({node, index}: {node: Node, index: number}) {
   )
 }
 
-export default NodeView
+export default React.memo(NodeView)

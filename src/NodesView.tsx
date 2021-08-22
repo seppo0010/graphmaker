@@ -36,7 +36,7 @@ function NodesView() {
   }, {enableOnTags: ['INPUT']})
   useHotkeys('a', () => addRef?.current?.focus(), {keyup: true})
   useHotkeys('s', (e: KeyboardEvent) => !e.ctrlKey && searchRef?.current?.focus(), {keyup: true})
-  const nodes = newNodeLabel === '' ? (searchCriteria === '' ? graph.nodes : graph.nodes.filter((n: Node) => n.label.indexOf(searchCriteria) > -1)) : []
+  const nodes = graph.nodes
   return (
     <div>
       <Typography variant="h5" component="h2" gutterBottom>
@@ -80,6 +80,7 @@ function NodesView() {
       <ul style={{padding: 0}}>
         {nodes.map((node: Node, index: number) => (
           <NodeView
+            visible={node.label.indexOf(searchCriteria) > -1}
             key={node.id}
             index={index}
             node={node}
