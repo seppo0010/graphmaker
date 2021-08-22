@@ -40,7 +40,7 @@ function EdgesView() {
   useHotkeys('a', () => {
     (addRef?.current?.getElementsByTagName('INPUT')[0] as HTMLInputElement).focus()
   }, {keyup: true})
-  useHotkeys('s', () => searchRef?.current?.focus(), {keyup: true})
+  useHotkeys('s', (e: KeyboardEvent) => !e.ctrlKey && searchRef?.current?.focus(), {keyup: true})
   const edges = searchCriteria === '' ? graph.edges : graph.edges.filter((e: Edge) => nodesById[e.from].label.indexOf(searchCriteria) > -1 || nodesById[e.to].label.indexOf(searchCriteria) > -1)
 
   return (

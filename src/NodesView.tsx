@@ -35,7 +35,7 @@ function NodesView() {
     el.value = v
   }, {enableOnTags: ['INPUT']})
   useHotkeys('a', () => addRef?.current?.focus(), {keyup: true})
-  useHotkeys('s', () => searchRef?.current?.focus(), {keyup: true})
+  useHotkeys('s', (e: KeyboardEvent) => !e.ctrlKey && searchRef?.current?.focus(), {keyup: true})
   const nodes = searchCriteria === '' ? graph.nodes : graph.nodes.filter((n: Node) => n.label.indexOf(searchCriteria) > -1)
   return (
     <div>
