@@ -76,7 +76,7 @@ function EdgesView() {
         }}
       />
       <Autocomplete
-        options={graph.nodes}
+        options={graph.nodes.slice().reverse()}
         getOptionLabel={(option) => option.label}
         onChange={(_, value) => setNewEdgeFrom(value)}
         value={newEdgeFrom}
@@ -91,7 +91,7 @@ function EdgesView() {
           )}
         />
       <Autocomplete
-        options={graph.nodes}
+        options={graph.nodes.slice().reverse()}
         getOptionLabel={(option) => option.label}
         blurOnSelect
         onChange={(_, value) => setNewEdgeTo(value)}
