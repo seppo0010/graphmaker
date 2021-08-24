@@ -9,7 +9,7 @@ import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
 import PublishIcon from '@material-ui/icons/Publish';
 import ShareIcon from '@material-ui/icons/Share';
-// import ImageIcon from '@material-ui/icons/Image';
+import ImageIcon from '@material-ui/icons/Image';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import IconButton from '@material-ui/core/IconButton';
 import Divider from '@material-ui/core/Divider';
@@ -78,12 +78,17 @@ function AppDrawer() {
     }
   }
 
-  const downloadAsDOT = () => {
+  const getDOT = () => {
     const nodes = Object.fromEntries(graph.nodes.map((node: Node) => [node.id, node]))
     let text = 'digraph {\n  rankdir=LR;\n'
     text += graph.nodes.map((n: Node) => `  "${n.label}"[shape=${n.shape}][color=${n.color}]`).join('\n') + '\n'
     text += graph.edges.map((e: Edge) => `  "${nodes[e.from].label}"->"${nodes[e.to].label}"[color=${e.color}]`).join('\n') + '\n'
     text += '}'
+    return text
+  }
+
+  const downloadAsDOT = () => {
+    const text = getDOT()
     const filename = (graph.name || 'graph') + '.dot'
     const element = document.createElement('a');
     element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
@@ -97,25 +102,17 @@ function AppDrawer() {
     document.body.removeChild(element);
   }
 
-  /* TODO
-  const downloadAsPNG = () => {
-    const dt = visJsRef?.current?.getElementsByTagName('canvas')[0]
-    if (!dt) return
-    const href = dt.toDataURL().replace(/^data:image\/[^;]/, 'data:application/octet-stream');
-    const filename = 'graph.png'
-    const element = document.createElement('a');
-    element.setAttribute('href', href)
-    element.setAttribute('download', filename);
-
-    element.style.display = 'none';
+  const preview = () => {
+    const text = getDOT()
+    const element = document.createElement('a')
+    element.target = '_blank'
+    element.href = 'https://dreampuf.github.io/GraphvizOnline/#' + encodeURIComponent(text)
     document.body.appendChild(element);
 
     element.click();
 
     document.body.removeChild(element);
   }
-  */
-
   return (
     <Drawer
       open={drawerIsOpen}
@@ -135,20 +132,18 @@ function AppDrawer() {
           <ListItemIcon><CloudDownloadIcon /></ListItemIcon>
           <ListItemText primary="Load from Drive" />
         </ListItem>
-        <ListItem button style={{paddingRight: 100}} onClick={uploadDOT}>
-          <ListItemIcon><PublishIcon /></ListItemIcon>
-          <ListItemText primary="Upload DOT" />
-        </ListItem>
         <ListItem button style={{paddingRight: 100}} onClick={downloadAsDOT}>
           <ListItemIcon><ShareIcon /></ListItemIcon>
           <ListItemText primary="Download as DOT" />
         </ListItem>
-        {/*
-        <ListItem button style={{paddingRight: 100}}>
-          <ListItemIcon><ImageIcon /></ListItemIcon>
-          <ListItemText primary="Download as PNG" />
+        <ListItem button style={{paddingRight: 100}} onClick={uploadDOT}>
+          <ListItemIcon><PublishIcon /></ListItemIcon>
+          <ListItemText primary="Upload DOT" />
         </ListItem>
-        */}
+        <ListItem button style={{paddingRight: 100}} onClick={preview}>
+          <ListItemIcon><ImageIcon /></ListItemIcon>
+          <ListItemText primary="View as graphviz" />
+        </ListItem>
       </List>
       {loadFromDriveOpen && <LoadFromDrive
         close={() => setLoadFromDriveOpen(false)}
