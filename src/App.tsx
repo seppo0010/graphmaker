@@ -24,10 +24,10 @@ function App() {
   const saved = useSelector((state: RootState) => state.drive.recentlySaved)
   const drawerIsOpen = useSelector((state: RootState) => state.navigation.drawerIsOpen)
   useHotkeys('alt+0', () => { dispatch(setDrawerIsOpen(!drawerIsOpen)) }, [drawerIsOpen])
-  useHotkeys('ctrl+1', () => { dispatch(setTab(0)) })
-  useHotkeys('ctrl+2', () => { dispatch(setTab(1)) })
-  useHotkeys('ctrl+3', () => { dispatch(setTab(2)) })
-  useHotkeys('ctrl+s', (event: any) => { dispatch(saveToDrive()); event.preventDefault() })
+  useHotkeys('ctrl+1', () => { dispatch(setTab(0)) }, {enableOnTags: ['INPUT', 'TEXTAREA']})
+  useHotkeys('ctrl+2', () => { dispatch(setTab(1)) }, {enableOnTags: ['INPUT', 'TEXTAREA']})
+  useHotkeys('ctrl+3', () => { dispatch(setTab(2)) }, {enableOnTags: ['INPUT', 'TEXTAREA']})
+  useHotkeys('ctrl+s', (event: any) => { dispatch(saveToDrive()); event.preventDefault() }, {enableOnTags: ['INPUT', 'TEXTAREA']})
 
   return (
     <div>
