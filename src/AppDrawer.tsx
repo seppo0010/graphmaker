@@ -81,8 +81,8 @@ function AppDrawer() {
   const getDOT = () => {
     const nodes = Object.fromEntries(graph.nodes.map((node: Node) => [node.id, node]))
     let text = 'digraph {\n  rankdir=LR;\n'
-    text += graph.nodes.map((n: Node) => `  "${n.label}"[shape=${n.shape}][color=${n.color}]`).join('\n') + '\n'
-    text += graph.edges.map((e: Edge) => `  "${nodes[e.from].label}"->"${nodes[e.to].label}"[color=${e.color}]`).join('\n') + '\n'
+    text += graph.nodes.map((n: Node) => `  "${n.label.replace(/"/g, '\\"')}"[shape=${n.shape}][color=${n.color}]`).join('\n') + '\n'
+    text += graph.edges.map((e: Edge) => `  "${nodes[e.from].label.replace(/"/g, '\\"')}"->"${nodes[e.to].label.replace(/"/g, '\\"')}"[color=${e.color}]`).join('\n') + '\n'
     text += '}'
     return text
   }
